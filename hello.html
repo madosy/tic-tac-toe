@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        
+        const generator = (nArr,a) => {
+    const output = []
+    nArr.forEach(n => {
+        output.push( [n, n+a, n+(2*a)] )
+    })
+    return output;
+}
+const rowConds = generator([0,3,6], 1);
+const cor2Conds = generator([2], 2);
+const colConds = generator([0,1,2], 3);
+const cor1Conds = generator([0], 4);
+
+const winConditions = [...rowConds, ...colConds, ...cor1Conds, ...cor2Conds]
+
+const testArray = [
+  "o",
+  "x",
+  0,
+  0,
+  "x",
+  0,
+  'o',
+  'x',
+  0
+];
+const testArray = [
+  "o",
+  "x",
+  0,
+  0,
+  "x",
+  0,
+  'o',
+  'x',
+  0
+];
+
+function getInd(myArr, myVal) {
+    return myArr.reduce((accumulator, currentValue, index) => {
+        if (currentValue == myVal) accumulator.push(index)
+        return accumulator
+    },[])
+}
+
+myXarr = getInd(testArray,'x') //[0,1,2,4]
+
+function condFilter(matchedArray, winConditions) {
+    const counter = {};
+    matchedArray.forEach((value) => {
+        winConditions.forEach((condition,index) => {
+            if(condition.includes(value)) {
+                console.log({condition, value})
+                if (counter.hasOwnProperty(index)) counter[index]++
+                else counter[index] = 1;
+            }
+        })
+    })
+return counter
+}
+
+
+
+const output = condFilter(myXarr,winConditions)
+// Object.keys(obj).forEach(e => console.log(`key=${e}  value=${obj[e]}`));
+
+console.log(output)
+
+Object.keys(output).forEach(key => {
+    if(output[key] == 3) console.log(winConditions[key]) //[0,1,2]
+    if(output[key] > 2) console.log('Winner winner chicken dinner')
+})
+
+let randArray = [0,1,2]
+randArray.forEach(val => {
+    if(testArray[val]===0) console.log(val)
+})
+
+const evaluator = (() => {
+  function getInd(myArr, myVal) {
+    return myArr.reduce((accumulator, currentValue, index) => {
+      if (currentValue === myVal) accumulator.push(index);
+      return accumulator;
+    }, []);
+  }
+
+  const winConditionGenerator = (nArray, a) => {
+    // Win Condition Formula: [n] [n+a] [n+2a] where n = [0,3,6] and a = 1
+    // Columns: [0,1,2], a=3; Corner1: [0], a=4; Corner2: [2], a=2;
+    const output = [];
+    nArray.forEach((n) => {
+      output.push([n, n + a, n + 2 * a]);
+    });
+    return output;
+  };
+
+  const rowConds = winConditionGenerator([0, 3, 6], 1);
+  const colConds = winConditionGenerator([0, 1, 2], 3);
+  const cor1Conds = winConditionGenerator([0], 4);
+  const cor2Conds = winConditionGenerator([2], 2);
+  const winConditions = [...rowConds, ...colConds, ...cor1Conds, ...cor2Conds];
+
+  function condFilter(matchedArray, winConditions) {
+    const counter = {};
+    matchedArray.forEach((value) => {
+      winConditions.forEach((condition, index) => {
+        if (condition.includes(value)) {
+          // console.log({condition, value})
+          if (counter.hasOwnProperty(index)) counter[index]++;
+          else counter[index] = 1;
+        }
+      });
+    });
+    return counter;
+  }
+
+  function getWinner() {
+    const marker = gameMaster.getCurrentPlayer()
+    const playerInd = getInd(gameBoard.getState(), marker);
+    const playerProgress = condFilter(playerInd, winConditions)
+    const winStatus = Object.keys(playerProgress).forEach((key) => {
+      if(playerProgress[key] > 2) return true;
+      return false
+    })
+    return winStatus;
+  }
+  console.log(getWinner());
+
+})();
+
+
+
+    </script>
+    
+</body>
+</html>
