@@ -28,7 +28,7 @@ export default class Pubsub {
         if (this.events[eventName]){
             const funcs = this.events[eventName]
             funcs.forEach((func) => {
-                // console.log(`"${eventName}" event is executing ${func.name}()`)
+                console.log(`"${eventName}" event is executing ${func.name}()`)
                 func.apply(null, [...args])
             })
         }

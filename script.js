@@ -23,12 +23,11 @@ const gameBoard = (() => {
     boardState = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     render();
   }
+  pubsub.subscription("restart", resetBoardState).subscribe();
 
   function getState() {
     return [...boardState];
   }
-
-  render();
 
   return { getState };
 })();
@@ -45,9 +44,15 @@ const gameMaster = (() => {
   const playerTwo = playerMaker("o");
   let currentPlayer = playerOne;
 
+  function resetStartingPlayer() {
+    currentPlayer = playerOne;
+  }
+  pubsub.subscription("restart", resetStartingPlayer).subscribe();
+
   function switchPlayer() {
     if (currentPlayer === playerOne) currentPlayer = playerTwo;
     else currentPlayer = playerOne;
+    console.log(`player is now ${getCurrentPlayer()}`);
   }
   pubsub.subscription("endTurn", switchPlayer).subscribe();
 
@@ -105,7 +110,8 @@ const evaluator = (() => {
       winConditions.forEach((condition, index) => {
         if (condition.includes(value)) {
           // console.log({condition, value})
-          if (counter.hasOwnProperty(index)) counter[index]++;
+          if (Object.prototype.hasOwnProperty.call(counter, index))
+            counter[index]++;
           else counter[index] = 1;
         }
       });
@@ -140,14 +146,95 @@ const evaluator = (() => {
 
 const displayController = (() => {
   const myP = document.querySelector(".winner");
+  const overlay = document.querySelector(".overlay");
+  const showOverlay = () => overlay.classList.add("visible");
+  const hideOverlay = () => overlay.classList.remove("visible");
+
+  overlay.innerHTML = `<h2>Team Doggo</h2>
+  <label for="player1">Please enter your name:
+  <p>
+  <input name="player1" id="player1" type="text"></label>
+  <button class="player1">Submit</button>
+  `;
+  const p1_button = document.querySelector(".player1");
+  p1_button.addEventListener("click", doSomething);
+
+  function doSomething() {
+    const p1_input = document.querySelector("input#player1");
+    console.log(p1_input.value);
+    selectDoggyWarrior();
+  }
+
+  function generateRadioButton(type, iconArray) {
+    let outputString = '';
+    iconArray.forEach(breed => {
+      outputString += `<input type="radio" name="${type}_icon" id="${breed}" value="${breed}">\n<label for="${breed}" class="${breed} icon"></label>\n`
+    })
+    return outputString;
+  }
+
+  function selectDoggyWarrior() {
+    overlay.innerHTML = `<h2>Team Doggo</h2>
+    Select your doggy warrior:
+    <p>
+    ${generateRadioButton('dog',['golden-retriever','corgi','yorkie','poodle'])}
+    <p>
+    <button class="player1-ico">Submit</button>
+    `;
+    
+    const p1_ico_button = document.querySelector(".player1-ico");
+    p1_ico_button.addEventListener("click", () => {
+      const selectedWarrior = document.querySelector('input[type="radio"]:checked')
+      document.documentElement.style.setProperty(`--selectedDog`, `var(--${selectedWarrior.value})`) 
+      // hideOverlay();
+      pubsub.publish('selectCat')
+
+    });
+  }
+
+  function selectKittyWarrior() {
+      overlay.innerHTML = `<h2>Team Doggo</h2>
+      Select your kitty warrior:
+      <p>
+      ${generateRadioButton('cat',['turkish-angora','siamese','scottish-fold'])}
+      <p>
+      <button class="player1-ico">Submit</button>
+      `;
+      
+      const p1_ico_button = document.querySelector(".player1-ico");
+      p1_ico_button.addEventListener("click", () => {
+        const selectedWarrior = document.querySelector('input[type="radio"]:checked')
+        document.documentElement.style.setProperty(`--selectedCat`, `var(--${selectedWarrior.value})`) 
+        hideOverlay();
+      })
+  };
+  pubsub.subscription('selectCat',selectKittyWarrior).subscribe();
+
+  
+
+  // adding class to announcement div and flavor text can be made into a function
+  // to avoid repeating?
 
   function announceWinner() {
-    myP.innerHTML = `Winner is ${gameMaster.getCurrentPlayer()}`;
+    showOverlay();
+    overlay.innerHTML = `Winner is ${gameMaster.getCurrentPlayer()}`;
   }
   pubsub.subscription("winnerFound", announceWinner).subscribe();
 
   function announceDraw() {
-    myP.innerHTML = "It's a draw...";
+    showOverlay();
+    overlay.innerHTML = "It's a draw...";
   }
   pubsub.subscription("draw", announceDraw).subscribe();
-})();
+
+  function resetAnnouncement() {
+    hideOverlay();
+    overlay.innerHTML = "";
+  }
+  pubsub.subscription("restart", resetAnnouncement).subscribe();
+
+  const restartButton = document.querySelector(".restart");
+  restartButton.addEventListener("click", () => {
+    pubsub.publish("restart");
+  });
+})()
