@@ -150,20 +150,7 @@ const displayController = (() => {
   const showOverlay = () => overlay.classList.add("visible");
   const hideOverlay = () => overlay.classList.remove("visible");
 
-  overlay.innerHTML = `<h2>Team Doggo</h2>
-  <label for="player1">Please enter your name:
-  <p>
-  <input name="player1" id="player1" type="text"></label>
-  <button class="player1">Submit</button>
-  `;
-  const p1_button = document.querySelector(".player1");
-  p1_button.addEventListener("click", doSomething);
-
-  function doSomething() {
-    const p1_input = document.querySelector("input#player1");
-    console.log(p1_input.value);
-    selectDoggyWarrior();
-  }
+  selectDoggyWarrior();
 
   function generateRadioButton(type, iconArray) {
     let outputString = '';
@@ -174,11 +161,13 @@ const displayController = (() => {
   }
 
   function selectDoggyWarrior() {
+    disableRestart();
+    
     overlay.innerHTML = `<h2>Team Doggo</h2>
     Select your doggy warrior:
-    <p>
+    <div class="icons">
     ${generateRadioButton('dog',['golden-retriever','corgi','yorkie','poodle'])}
-    <p>
+    </div>
     <button class="player1-ico">Submit</button>
     `;
     
@@ -193,31 +182,41 @@ const displayController = (() => {
   }
 
   function selectKittyWarrior() {
-      overlay.innerHTML = `<h2>Team Doggo</h2>
+      overlay.innerHTML = `<h2>Team Kitty</h2>
       Select your kitty warrior:
-      <p>
-      ${generateRadioButton('cat',['turkish-angora','siamese','scottish-fold'])}
-      <p>
-      <button class="player1-ico">Submit</button>
+      <div class="icons">
+      ${generateRadioButton('cat',['turkish-angora','siamese','scottish-fold','japanese-bobtail'])}
+      </div>
+      <button class="player2-ico">Submit</button>
       `;
       
-      const p1_ico_button = document.querySelector(".player1-ico");
-      p1_ico_button.addEventListener("click", () => {
+      const p2_ico_button = document.querySelector(".player2-ico");
+      p2_ico_button.addEventListener("click", () => {
         const selectedWarrior = document.querySelector('input[type="radio"]:checked')
         document.documentElement.style.setProperty(`--selectedCat`, `var(--${selectedWarrior.value})`) 
         hideOverlay();
+        enableRestart();
       })
   };
   pubsub.subscription('selectCat',selectKittyWarrior).subscribe();
 
-  
+  function enableRestart(){
+    const restartButton = document.querySelector('button.restart')
+    restartButton.disabled = false;
+  }
+  function disableRestart(){
+    const restartButton = document.querySelector('button.restart')
+    restartButton.disabled = true;
+  }
 
   // adding class to announcement div and flavor text can be made into a function
   // to avoid repeating?
 
   function announceWinner() {
     showOverlay();
-    overlay.innerHTML = `Winner is ${gameMaster.getCurrentPlayer()}`;
+    overlay.innerHTML = `Winner is ${gameMaster.getCurrentPlayer()}
+    <p>
+    <div class="${gameMaster.getCurrentPlayer()} winner"></div>`;
   }
   pubsub.subscription("winnerFound", announceWinner).subscribe();
 

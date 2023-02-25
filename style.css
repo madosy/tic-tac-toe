@@ -1,3 +1,7 @@
+
+  @import url('https://fonts.googleapis.com/css2?family=Chewy&family=Share+Tech+Mono&display=swap');
+
+
 :root{
     --selectedDog: var(--poodle);
     --poodle: url(./images/dogs/poodle.png);
@@ -10,6 +14,7 @@
     --turkish-angora: url(./images/cats/turkish-angora.png);
     --siamese: url(./images/cats/siamese.png);
     --scottish-fold: url(./images/cats/scottish-fold.png);
+    --japanese-bobtail: url(./images/cats/japanese-bobtail.png);
 }
 
 .turkish-angora {
@@ -21,16 +26,53 @@
 .scottish-fold {
     background-image: var(--scottish-fold);
 }
+.japanese-bobtail {
+    background-image: var(--japanese-bobtail);
+}
 .golden-retriever {
     background-image: var(--golden-retriever);
 }
 
-.grid-container {
-    display: grid;
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #254e70;
+    color: #aef3e7;
+    font-family: 'Share Tech Mono', monospace;
+    
 }
 
-h1 {
+h2{
+    font-family: 'Share Tech Mono', monospace;
+    color: #aef3e7;
+}
+
+.grid-container {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 100px 1fr 50px;
+    align-items: baseline;
+    justify-items: center;
+}
+
+.title {
+    color: #aef3e7;
     text-align: center;
+    font-family: 'Chewy', cursive;
+    font-size: 4rem;
+    grid-row: 2;
+    margin:10px;
+}
+
+.accent{
+    color:#c33c54;
+}
+
+
+
+.game-container{
+    color:#37718e
+    grid-row: 2;
 }
 
 .container {
@@ -42,8 +84,22 @@ h1 {
     margin: auto;
 }
 
+.button-container{
+    margin-top: 30px;
+    text-align: center;
+}
+
+footer{
+    grid-row:3 span1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: baseline;
+    align-items: center;
+}
+
 .game-square {
-    background-color: #d3d3d3;
+    background-color: #37718e;
     min-height: 50px;
     min-width: 50px;
 
@@ -54,11 +110,29 @@ h1 {
     z-index: 0;
 }
 
+.game-square:nth-of-type(1){
+    border-radius: 10px 0 0 0;
+}
+.game-square:nth-of-type(3){
+    border-radius: 0 10px 0 0;
+}
+.game-square:nth-of-type(7){
+    border-radius: 0 0 0 10px;
+}
+.game-square:nth-of-type(9){
+    border-radius: 0 0 10px 0;
+}
+
+.game-square:not(.x, .o):hover {
+    background-color: #c33c54;
+}
+
 .x{
     background-color: unset;
     background-image: var(--selectedDog);
     background-size: contain;
 }
+
 
 .o {
     background-color: unset;
@@ -70,31 +144,55 @@ h1 {
     background-repeat: no-repeat;
 }
 
+.winner{
+    width: 200px;
+    height: 200px;
+}
+
+.winner:hover {
+    opacity: 10%;;
+}
+
+
 .overlay{
     visibility: hidden;
     box-sizing: border-box;
     position: absolute;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     height: 100%;
     /* border: 1px solid black; */
-    text-align: center;
-    background-color: rgba(255,255,255, 90%);
+
+    background-color: rgba(37, 78, 112, 90%);
 }
 
 .visible {
     visibility: visible;
 }
 
+
+
 input[type="radio"] {
     appearance: none;
+    display: none;
 }
 
 label.icon {
     display: inline-block;
     background-size: cover;
-    width: 50px;
-    height: 50px; 
+    width: 60px;
+    height: 60px; 
+
+}
+
+.icons{
+    margin: 20px 0;
+    display: flex;
+    gap: 5px;
+    align-content: center;
 }
 
 .akita-inu {
@@ -116,5 +214,40 @@ label.icon {
 input[type="radio"]:not(:checked) + label.icon{
     filter: grayscale();
     opacity: 30%;
+}
 
+button:disabled {
+    display:none;
+}
+
+a{
+    color: #37718e;
+    text-decoration: none;
+    font-size: 0.8rem;
+}
+a:hover {
+    color: #aef3e7;
+}
+
+button{
+    appearance: none;
+    background-color: #37718e;
+    border: none;
+    border-radius: 20px;
+    font-size: 1.5rem;
+    color:#aef3e7;
+    padding: 0 20px;
+    font-family: 'Chewy', cursive;
+}
+
+button::first-letter{
+    color:#c33c54
+}
+
+button:active{
+    transform: scale(90%);
+}
+
+svg{
+    transform: scale(80%);
 }
