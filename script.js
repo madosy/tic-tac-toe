@@ -213,8 +213,9 @@ const displayController = (() => {
   // to avoid repeating?
 
   function announceWinner() {
+    const winningTeam = (gameMaster.getCurrentPlayer() === 'x')? 'Doggo':'Kitty';
     showOverlay();
-    overlay.innerHTML = `Winner is ${gameMaster.getCurrentPlayer()}
+    overlay.innerHTML = `Winner is ${winningTeam}
     <p>
     <div class="${gameMaster.getCurrentPlayer()} winner"></div>`;
   }
